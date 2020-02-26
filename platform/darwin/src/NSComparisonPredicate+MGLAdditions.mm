@@ -115,14 +115,8 @@
             return @[op, leftHandPredicate.mgl_jsonExpressionObject, rightHandPredicate.mgl_jsonExpressionObject];
         }
         case NSInPredicateOperatorType: {
-            
-            NSExpression *matchExpression = [NSExpression expressionForFunction:@"MGL_MATCH"
-                                                                      arguments:@[self.leftExpression,
-                                                                                  self.rightExpression,
-                                                                                  [NSExpression expressionForConstantValue:@YES],
-                                                                                  [NSExpression expressionForConstantValue:@NO]]];
-
-            return matchExpression.mgl_jsonExpressionObject;
+            op = @"in";
+            break;
         }
         case NSContainsPredicateOperatorType: {
             NSPredicate *inPredicate = [NSComparisonPredicate predicateWithLeftExpression:self.rightExpression
