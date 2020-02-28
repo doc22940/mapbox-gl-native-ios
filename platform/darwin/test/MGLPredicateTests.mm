@@ -293,6 +293,47 @@
         NSPredicate *predicateAfter = [NSPredicate predicateWithFormat:@"'📍' IN 'Pinole'"];
         XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicateAfter);
     }
+    {
+        NSArray *expected = @[@"in", @[@"id"], @[@"literal", @[@6, @5, @4, @3]]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY {6, 5, 4, 3} = $featureIdentifier"];
+        XCTAssertEqualObjects(predicate.mgl_jsonExpressionObject, expected);
+        NSPredicate *predicateAfter = [NSPredicate predicateWithFormat:@"$featureIdentifier IN {6, 5, 4, 3}"];
+        XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicateAfter);
+    }
+    {
+        NSArray *expected = @[@"!", @[@"in", @[@"id"], @[@"literal", @[@6, @5, @4, @3]]]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NONE {6, 5, 4, 3} = $featureIdentifier"];
+        XCTAssertEqualObjects(predicate.mgl_jsonExpressionObject, expected);
+        NSPredicate *predicateAfter = [NSPredicate predicateWithFormat:@"NOT $featureIdentifier IN {6, 5, 4, 3}"];
+        XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicateAfter);
+    }
+    {
+        NSArray *expected = @[@"!", @[@"in", @[@"id"], @[@"literal", @[@6, @5, @4, @3]]]];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ALL {6, 5, 4, 3} != $featureIdentifier"];
+        XCTAssertEqualObjects(predicate.mgl_jsonExpressionObject, expected);
+        NSPredicate *predicateAfter = [NSPredicate predicateWithFormat:@"NOT $featureIdentifier IN {6, 5, 4, 3}"];
+        XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicateAfter);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY {6, 5, 4, 3} != $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY {6, 5, 4, 3} > $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NONE {6, 5, 4, 3} != $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ALL {6, 5, 4, 3} = $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ALL {6, 5, 4, 3} < $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
 }
 
 - (void)testComparisonPredicatesWithOptions {
@@ -365,6 +406,20 @@
                                         @"diacritic-sensitive": @NO,
                                         @"locale": @"tlh"}]];
         XCTAssertEqualObjects([predicate.mgl_jsonExpressionObject lastObject], jsonExpression);
+    }
+    
+    // https://github.com/mapbox/mapbox-gl-js/issues/9339
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ANY {6, 5, 4, 3} =[c] $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"NONE {6, 5, 4, 3} =[d] $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
+    }
+    {
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ALL {6, 5, 4, 3} !=[cd] $featureIdentifier"];
+        XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
     }
 }
 
