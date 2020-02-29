@@ -161,6 +161,9 @@
             return @[op, leftHandPredicate.mgl_jsonExpressionObject, rightHandPredicate.mgl_jsonExpressionObject];
         }
         case NSInPredicateOperatorType: {
+            if (self.leftExpression.expressionType == NSEvaluatedObjectExpressionType) {
+                return @[@"within", self.rightExpression.mgl_jsonExpressionObject];
+            }
             op = @"in";
             break;
         }

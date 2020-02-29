@@ -334,6 +334,65 @@
         NSPredicate *predicate = [NSPredicate predicateWithFormat:@"ALL {6, 5, 4, 3} < $featureIdentifier"];
         XCTAssertThrowsSpecificNamed(predicate.mgl_jsonExpressionObject, NSException, NSInvalidArgumentException);
     }
+    {
+        NSArray *expected = @[
+            @"within",
+            @{
+                @"type": @"Polygon",
+                @"coordinates": @[
+                    @[
+                        @[@0, @0],
+                        @[@0, @1],
+                        @[@1, @1],
+                        @[@1, @0],
+                    ],
+                ],
+            },
+        ];
+        CLLocationCoordinate2D coordinates[] = {
+            { .latitude = 0, .longitude = 0 },
+            { .latitude = 1, .longitude = 0 },
+            { .latitude = 1, .longitude = 1 },
+            { .latitude = 0, .longitude = 1 },
+        };
+        MGLPolygon *shape = [MGLPolygon polygonWithCoordinates:coordinates count:sizeof(coordinates) / sizeof(coordinates[0])];
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"SELF IN %@", shape];
+        XCTAssertEqualObjects(predicate.mgl_jsonExpressionObject, expected);
+        XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicate);
+    }
+    {
+        NSArray *expected = @[
+            @"within",
+            @{
+                @"type": @"Feature",
+                @"id": @"unit",
+                @"properties": @{},
+                @"geometry": @{
+                    @"type": @"Polygon",
+                    @"coordinates": @[
+                        @[
+                            @[@0, @0],
+                            @[@0, @1],
+                            @[@1, @1],
+                            @[@1, @0],
+                        ],
+                    ],
+                },
+            },
+        ];
+        CLLocationCoordinate2D coordinates[] = {
+            { .latitude = 0, .longitude = 0 },
+            { .latitude = 1, .longitude = 0 },
+            { .latitude = 1, .longitude = 1 },
+            { .latitude = 0, .longitude = 1 },
+        };
+        MGLPolygonFeature *feature = [MGLPolygonFeature polygonWithCoordinates:coordinates count:sizeof(coordinates) / sizeof(coordinates[0])];
+        feature.identifier = @"unit";
+        NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%@ CONTAINS SELF", feature];
+        XCTAssertEqualObjects(predicate.mgl_jsonExpressionObject, expected);
+        NSPredicate *predicateAfter = [NSPredicate predicateWithFormat:@"SELF IN %@", feature];
+        XCTAssertEqualObjects([NSPredicate predicateWithMGLJSONObject:expected], predicateAfter);
+    }
 }
 
 - (void)testComparisonPredicatesWithOptions {

@@ -6,8 +6,7 @@ Mapbox welcomes participation and contributions from everyone. Please read [CONT
 
 ### Styles and rendering
 
-* The `IN` and `CONTAINS` predicate operators can now test whether a string is a substring of another string. ([#16162](https://github.com/mapbox/mapbox-gl-native/pull/16162), [#183](https://github.com/mapbox/mapbox-gl-native-ios/pull/183))
-* Added the `within` expression function for testing whether the evaluated feature lies within the given GeoJSON object. Use this function in expressions in style JSON or with the `MGL_FUNCTION()` syntax in an `NSExpression` format string. ([#16157](https://github.com/mapbox/mapbox-gl-native/pull/16157))
+* The `IN` and `CONTAINS` predicate operators can now test whether a string is a substring of another string or whether the evaluated feature (`SELF`) lies within a given `MGLShape` or `MGLFeature`. ([#183](https://github.com/mapbox/mapbox-gl-native-ios/pull/183), [#184](https://github.com/mapbox/mapbox-gl-native-ios/pull/184])
 * Added the `MGLLineStyleLayer.lineSortKey` and `MGLFillStyleLayer.fillSortKey` properties. ([#179](https://github.com/mapbox/mapbox-gl-native-ios/pull/179), [#16194](https://github.com/mapbox/mapbox-gl-native/pull/16194), [#16220](https://github.com/mapbox/mapbox-gl-native/pull/16220))
 * The `-[MGLStyle localizeLabelsIntoLocale:]` and `-[NSExpression mgl_expressionLocalizedIntoLocale:]` methods can now localize text into Traditional Chinese and Vietnamese. ([#173](https://github.com/mapbox/mapbox-gl-native-ios/pull/173))
 * Fixed an issue where an `MGLSymbolStyleLayer.lineDashPattern` value of `{1, 0}` resulted in hairline gaps. ([#16202](https://github.com/mapbox/mapbox-gl-native/pull/16202))
